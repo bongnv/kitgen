@@ -11,21 +11,30 @@ import (
 
 type Options struct {
 	TemplateFile string
+	TemplateName string
 	Identifier   string
 	Dir          string
 }
 
 func Process(opts *Options) error {
+
 	c := &Command{
 		DataParser: &interfaceParser{
 			Name: opts.Identifier,
 		},
-		Generator: &fileTemplate{
-			filePath: opts.TemplateFile,
-		},
 		Writer:   os.Stdout,
 		FilePath: opts.Dir + "noop.go",
 		CodePath: opts.Dir,
+	}
+
+	if opts.TemplateName > "" {
+		c.Generator = &inMemoryTemplate{
+			Name: opts.TemplateName,
+		}
+	} else {
+		c.Generator = &fileTemplate{
+			filePath: opts.TemplateFile,
+		}
 	}
 
 	return c.Process()

@@ -4,7 +4,11 @@ go:
   - 1.11.x
   - 1.12.x
 
+before_script:
+  go get -u honnef.co/go/tools/cmd/staticcheck
+
 script:
+  - staticcheck ./...
   - go test -race -v -coverprofile=coverage.txt -covermode=atomic ./...
 
 after_success:

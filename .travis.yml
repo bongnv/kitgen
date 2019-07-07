@@ -4,5 +4,8 @@ go:
   - 1.11.x
   - 1.12.x
 
-scripts:
-  - go test -race -v ./...
+script:
+  - go test -race -v -coverprofile=coverage.txt -covermode=atomic ./...
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)

@@ -46,30 +46,31 @@ func (p *interfaceParser) Parse(pkgs []*packages.Package) (*Data, error) {
 	for _, pkg := range pkgs {
 		for _, f := range pkg.Syntax {
 			for _, decl := range f.Decls {
-				switch decl := decl.(type) {
-				case *ast.GenDecl:
+				if decl, ok := decl.(*ast.GenDecl); ok {
 					for _, spec := range decl.Specs {
-						switch spec := spec.(type) {
-						case *ast.TypeSpec:
-							sType, ok := spec.Type.(*ast.InterfaceType)
-							if !ok {
-								continue
-							}
-
-							if spec.Name.Name != p.Name {
-								continue
-							}
-
-							d := &Data{
-								InterfaceName: p.Name,
-								Package:       pkg.PkgPath,
-								PackageName:   f.Name.Name,
-								Imports:       extractImports(f),
-								Methods:       extractMethodsFromInterfaces(sType),
-							}
-
-							return d, nil
+						spec, ok := spec.(*ast.TypeSpec)
+						if !ok {
+							continue
 						}
+
+						sType, ok := spec.Type.(*ast.InterfaceType)
+						if !ok {
+							continue
+						}
+
+						if spec.Name.Name != p.Name {
+							continue
+						}
+
+						d := &Data{
+							InterfaceName: p.Name,
+							Package:       pkg.PkgPath,
+							PackageName:   f.Name.Name,
+							Imports:       extractImports(f),
+							Methods:       extractMethodsFromInterfaces(sType),
+						}
+
+						return d, nil
 					}
 				}
 			}

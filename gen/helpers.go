@@ -30,27 +30,27 @@ func extractImports(f *ast.File) []*Import {
 func extractMethodsFromInterfaces(i *ast.InterfaceType) []*Method {
 	var methods []*Method
 	for _, method := range i.Methods.List {
-		switch fnType := method.Type.(type) {
-		case *ast.FuncType:
-			params, results := extractParamsAndResults(fnType)
-			fn := &Method{
-				Name:    method.Names[0].Name,
-				Params:  params,
-				Results: results,
-			}
-
-			methods = append(methods, fn)
+		fnType, ok := method.Type.(*ast.FuncType)
+		if !ok {
+			continue
 		}
+		params, results := extractParamsAndResults(fnType)
+		fn := &Method{
+			Name:    method.Names[0].Name,
+			Params:  params,
+			Results: results,
+		}
+
+		methods = append(methods, fn)
 	}
 
 	return methods
 }
 
-func extractParamsAndResults(fnDesl *ast.FuncType) ([]*Field, []*Field) {
-	params := extractFieldsFromAst(fnDesl.Params.List)
-	results := extractFieldsFromAst(fnDesl.Results.List)
-
-	return params, results
+func extractParamsAndResults(fnDesl *ast.FuncType) (params, results []*Field) {
+	params = extractFieldsFromAst(fnDesl.Params.List)
+	results = extractFieldsFromAst(fnDesl.Results.List)
+	return
 }
 
 func extractFieldsFromAst(items []*ast.Field) []*Field {

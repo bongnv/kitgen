@@ -3,7 +3,6 @@ package gen
 import (
 	"bytes"
 	"io"
-	"log"
 	"os"
 
 	"golang.org/x/tools/imports"
@@ -17,7 +16,6 @@ type Options struct {
 }
 
 func Process(opts *Options) error {
-
 	c := &Command{
 		DataParser: &interfaceParser{
 			Name: opts.Identifier,
@@ -65,8 +63,6 @@ func (c *Command) Process() error {
 	if err != nil {
 		return err
 	}
-
-	log.Println(buf.String())
 
 	out, err := imports.Process(c.FilePath, buf.Bytes(), nil)
 	if err != nil {

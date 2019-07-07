@@ -1,0 +1,20 @@
+package {{ .PackageName }}
+
+import (
+  "error"
+
+  {{ range $impt := .Imports }}{{ $impt.Name }} "{{ $impt.Path }}"
+  {{ end }}
+)
+
+{{ $structName := printf "%s%s" "Noop" .InterfaceName }}
+
+// {{ $structName }} ...
+type {{ $structName }} struct {}
+
+{{ range $method := .Methods }}
+// {{ $method.Name }} ...
+func (_ {{ $structName }}) {{ $method.Name }}({{ range $index, $param := $method.Params }}{{ if ne $index 0}},{{ end }}_ {{ $param.Type }}{{ end }}) ({{ range $index, $result := $method.Results }} {{ if ne $index 0}},{{ end }}{{ $result.Type }}{{ end }}) {
+return {{ range $index, $result := $method.Results }}{{ if ne $index 0}},{{ end }} {{if eq $result.Type "error"}}errors.New("method {{ $method.Name }} is unimplemented"){{else}}{{ emptyValue $result.Type }}{{end}}{{ end }}
+}
+{{end}}

@@ -9,11 +9,11 @@ import (
 
 // Data includes data for templates.
 type Data struct {
-	InterfaceName string
-	Package       string
-	PackageName   string
-	Methods       []*Method
-	Imports       []*Import
+	TypeName    string
+	Package     string
+	PackageName string
+	Methods     []*Method
+	Imports     []*Import
 }
 
 // Method presents a method.
@@ -63,11 +63,11 @@ func (p *interfaceParser) Parse(pkgs []*packages.Package) (*Data, error) {
 						}
 
 						d := &Data{
-							InterfaceName: p.Name,
-							Package:       pkg.PkgPath,
-							PackageName:   f.Name.Name,
-							Imports:       extractImports(f),
-							Methods:       extractMethodsFromInterfaces(sType),
+							TypeName:    p.Name,
+							Package:     pkg.PkgPath,
+							PackageName: f.Name.Name,
+							Imports:     extractImports(f),
+							Methods:     extractMethodsFromInterfaces(sType),
 						}
 
 						return d, nil

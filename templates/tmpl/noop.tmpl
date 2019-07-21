@@ -7,7 +7,7 @@ import (
   {{ end }}
 )
 
-{{ $structName := printf "%s%s" "Noop" .InterfaceName }}
+{{ $structName := printf "%s%s" "Noop" .TypeName }}
 
 // {{ $structName }} ...
 type {{ $structName }} struct {}

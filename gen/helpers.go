@@ -6,8 +6,6 @@ import (
 	"io"
 	"strings"
 	"text/template"
-
-	"golang.org/x/tools/go/packages"
 )
 
 func extractImports(f *ast.File) []*Import {
@@ -95,22 +93,6 @@ func getTypeString(expr ast.Expr) string {
 		result = fmt.Sprintf("%s", etype)
 	}
 	return result
-}
-
-func parsePath(path string) ([]*packages.Package, error) {
-	return packages.Load(
-		&packages.Config{
-			Mode: packages.NeedName |
-				packages.NeedFiles |
-				packages.NeedImports |
-				packages.NeedDeps |
-				packages.NeedCompiledGoFiles |
-				packages.NeedTypes |
-				packages.NeedSyntax |
-				packages.NeedTypesInfo,
-		},
-		path,
-	)
 }
 
 func emptyValue(typeName string) string {

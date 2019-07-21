@@ -14,23 +14,34 @@ func exitWithErr(err error) {
 }
 
 func main() {
+	opts := parseOptionsFromCmd()
+	if err := gen.Process(opts); err != nil {
+		exitWithErr(err)
+	}
+}
+
+func parseOptionsFromCmd() *gen.Option {
 	templateFile := flag.String("t", "", "Path to template file")
 	identifier := flag.String("i", "", "Identifier of type to parse")
 	dir := flag.String("d", ".", "Path to source directory")
+	out := flag.String("o", "", "Write to file")
+
 	flag.Parse()
 
-	if *templateFile == "" || *identifier == "" {
-		flag.PrintDefaults()
-		os.Exit(1)
-	}
-
-	err := gen.Process(&gen.Options{
+	opts := &gen.Option{
 		TemplateFile: *templateFile,
 		Identifier:   *identifier,
 		Dir:          *dir,
-	})
+		Output:       *out,
+	}
 
-	if err != nil {
-		exitWithErr(err)
+	validateOptions(opts)
+	return opts
+}
+
+func validateOptions(opts *gen.Option) {
+	if opts.TemplateFile == "" || opts.Identifier == "" {
+		flag.PrintDefaults()
+		os.Exit(1)
 	}
 }

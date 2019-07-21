@@ -27,3 +27,14 @@ func Test_executeTemplate(t *testing.T) {
 		require.Equal(t, "true", buf.String())
 	})
 }
+
+func Test_replace(t *testing.T) {
+	input := "*AddServer"
+	output := replace(input, "*", "&")
+	require.Equal(t, "&AddServer", output)
+}
+
+func Test_concat(t *testing.T) {
+	output := concat("*", "pb", ".", "Concat")
+	require.Equal(t, "*pb.Concat", output)
+}

@@ -8,8 +8,9 @@ before_script:
   - go get -u honnef.co/go/tools/cmd/staticcheck
 
 script:
-  - staticcheck ./...
-  - go test -race -v -coverprofile=coverage.txt -covermode=atomic ./...
+  - export GO_FILES=$(go list ./... | grep -v /vendor/ | grep -v /testdata/)
+  - staticcheck $GO_FILES
+  - go test -race -v -coverprofile=coverage.txt -covermode=atomic $GO_FILES
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)

@@ -129,11 +129,21 @@ func isNumber(typeName string) bool {
 		typeName == "float32"
 }
 
+func replace(input, from, to string) string {
+	return strings.Replace(input, from, to, -1)
+}
+
+func concat(inputs ...string) string {
+	return strings.Join(inputs, "")
+}
+
 func getFuncMap() template.FuncMap {
 	return template.FuncMap{
 		"emptyValue": emptyValue,
 		"isPointer":  isPointer,
 		"isNumber":   isNumber,
+		"replace":    replace,
+		"concat":     concat,
 	}
 }
 

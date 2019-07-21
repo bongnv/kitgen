@@ -1,9 +1,10 @@
-package endpoint
+{{- $packageName := .PackageName }}
+{{- $serviceInterface := printf "%s.%s" .PackageName .TypeName -}}
+
+package server
 
 import (
 	"context"
-	"net/url"
-	"strings"
 
 	"github.com/go-kit/kit/endpoint"
 	"{{ .Package }}"
@@ -11,26 +12,29 @@ import (
 
 // Endpoints ...
 type Endpoints struct {
-{{range $method := .Methods }}
-{{ $method.Name }}Endpoint endpoint.Endpoint{{end}}
+{{ range $method := .Methods }}
+	{{- $method.Name }}Endpoint endpoint.Endpoint
+{{ end -}}
 }
 
 // MakeServerEndpoints returns an Endpoints struct where each endpoint invokes
 // the corresponding method on the provided service.
-func MakeServerEndpoints(s service.Service) Endpoints {
+func MakeServerEndpoints(s {{ $serviceInterface }}) Endpoints {
 	return Endpoints{
-	{{range $method := .Methods }}
-		{{ $method.Name }}Endpoint:   Make{{ $method.Name }}Endpoint(s),{{end}}
+	{{ range $method := .Methods }}
+		{{- $method.Name }}Endpoint: make{{ $method.Name }}Endpoint(s),
+	{{ end -}}
 	}
 }
 
 {{ range $method := .Methods }}
-// Make{{ $method.Name }}Endpoint returns an endpoint via the passed service.
-func Make{{ $method.Name }}Endpoint(s service.Service) endpoint.Endpoint {
-	return func(ctx context.Context, request interface{}) (response interface{}, err error) {
-		req := request.(postProfileRequest)
-		e := s.PostProfile(ctx, req.Profile)
-		return postProfileResponse{Err: e}, nil
+// make{{ $method.Name }}Endpoint returns an endpoint via the passed service.
+func make{{ $method.Name }}Endpoint(s {{ $serviceInterface }}) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+	{{- $requestType := replace (index $method.Params 1).Type "*" (concat "*" $packageName ".") }}
+		req := request.({{ $requestType }})
+		resp, e := s.{{ $method.Name }}(ctx, req)
+		return resp, e
 	}
 }
 {{end}}
